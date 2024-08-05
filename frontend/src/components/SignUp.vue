@@ -23,7 +23,7 @@
         중복확인
       </button>
     </div>
-    <div v-if="validateObjs.userIdError" class="error"> {{ userIdError }} </div>
+    <div v-if="validateObjs.userIdError" class="error"> {{ validateObjs.userIdError }} </div>
     <div v-if="!validateObjs.userIdIsDup" class="success"> 사용 가능합니다. </div>
     
     <div>
@@ -65,6 +65,7 @@
 <script setup>
   import { reactive } from 'vue';
   import { $axios } from '@/api/index';
+  import { router } from '@/routers/index';
 
   const api = $axios();
 
@@ -127,6 +128,9 @@
     } else {
       if(dupOkUserId != user.userId){
         validateObjs.userIdError = "User Id 중복확인을 해주세요.";
+        validateObjs.userIdIsDup = true;
+        document.getElementById("userId").classList.remove("is-valid");
+        document.getElementById("userId").classList.add("is-invalid");        
         return false;
       }
     }
@@ -145,9 +149,10 @@
     if(!confirm("가입하시겠습니까?")) return;
 
     api.
-      post("/users/sign-up", {user})
+      post("/users/sign-up", user)
       .then(() => {
-
+        window.alert("가입이 완료됐습니다!\n로그인을 해주세요!");
+        router.push("/login");
       })
       .catch((error) => {
         console.log(error);
