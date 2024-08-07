@@ -16,15 +16,64 @@
       </button>
     </div>
     <hr>
-    
+
+    <div class="item-container" v-if="!errorMsg.value">
+      <div class="input-group mb-3" v-for="item in todos" :key="item.id">
+        <div class="input-group-text">
+          <input class="form-check-input mt-0" 
+                  type="checkbox" aria-label="Checkbox for following text input" 
+                  @click="checkTodo(item.id)"  :checked="item.completed === 'Y'">
+        </div>
+        <p class="form-control mb-0" :class="['form-control mb-0', item.completed === 'Y' ? 'todo-completed' : '']">{{ item.subject }}</p>
+      </div>
+    </div>
+    <div class="item-container" v-else>
+      {{ errorMsg.value }}
+    </div>
     
   </div>
 </template>
 
 <script setup>
+  import { $axios } from '@/api/index';
+  import { ref, onMounted } from 'vue';
+  import { useUserStore } from '@/store/userStore';
+
+  const api = $axios();
+  const todos = ref([]);
+
+  const userStore = useUserStore();
+
+  const token = userStore.token || '';
+  const errorMsg = ref('');
+
+  const fetchTodos = async () => {
+    try {
+      const response = await api.get('/todos/list', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      todos.value = response.data;
+
+    } catch (error) {
+      console.log(errMsg + "\n" + error);
+      const errMsg =  error.response?.data?.message || 'Failed to fetch todos';
+      errorMsg.value = errMsg;
+    }
+  }
+
+  onMounted(fetchTodos);
 
 </script>
 
-<style>
+<style scoped>
+  .item-container{
+    width: 80%;
+    padding: 10px;
+  }
 
+  .todo-completed{
+    text-decoration: line-through;
+  }
 </style>

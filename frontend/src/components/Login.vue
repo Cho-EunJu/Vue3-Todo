@@ -35,20 +35,23 @@
 
     const login = async () => {
         try {
-            const response = await api.post('/api/v1/users/login', {
+            const response = await api.post('/users/login', {
                 userId : userId.value,
                 password: password.value
             });
 
             const {token, userName} = response.data;
+            //console.log(token + " // " + userName);
             userStore.setUser({token, userName});
             
             window.alert(`환영합니다! ${userName} 님!`);
             router.push("/");
 
         } catch (error) {
-            console.log("LOGIN ERROR!");
-            console.log(error);
+            console.log("LOGIN ERROR!",error);
+            window.alert(error.response.data.split(":")[1]);
+            userId.value = '';
+            password.value = '';
         }
     }
 </script>

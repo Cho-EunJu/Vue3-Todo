@@ -72,7 +72,7 @@ const createTodo = () => {
       console.log(error);
     })
     .finally(() => {
-      console.log("finally !");
+      
     })
   
 }

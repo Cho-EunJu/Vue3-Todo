@@ -65,9 +65,10 @@
 <script setup>
   import { reactive } from 'vue';
   import { $axios } from '@/api/index';
-  import { router } from '@/routers/index';
+  import { useRouter } from 'vue-router';
 
   const api = $axios();
+  const router = useRouter();
 
   let dupOkUserId = '';
 
@@ -97,12 +98,17 @@
         document.getElementById("userId").classList.add("is-valid");
         validateObjs.userIdIsDup = false;
         dupOkUserId = user.userId;
+
       })
       .catch((error) => {
-        console.log(error);
+        validateObjs.userIdError = error.response.data.split(":")[1];
+        validateObjs.userIdIsDup = true;
+        dupOkUserId = null;
+        document.getElementById("userId").classList.remove("is-valid");
+        document.getElementById("userId").classList.add("is-invalid");       
       })
       .finally(() => {
-        console.log("finally~!");
+
       })
   }
 
@@ -158,7 +164,7 @@
         console.log(error);
       })
       .finally(() => {
-        console.log("finally~!!")
+        
       })
 
   }

@@ -26,6 +26,7 @@ public class TodoEntity {
 	private String body;
 	
 	private String userId;
+	private String completed;
 	
 
 }

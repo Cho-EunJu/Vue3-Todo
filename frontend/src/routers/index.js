@@ -25,7 +25,7 @@ router.beforeEach((to, from, next) => {
     
     if(to.path.startsWith('/todos')){
         if(!userStore.checkTokenExpiry()){
-            window.alert("세션이 만료되어 로그아웃 되었습니다.");
+            window.alert("로그인 후 이용할 수 있는 메뉴입니다.");
             next("/login");
             return;
         } 
@@ -34,4 +34,4 @@ router.beforeEach((to, from, next) => {
     next();
 })
 
-export {router}
+export { router }

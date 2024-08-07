@@ -19,13 +19,18 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping("/check-id")
-	public ResponseEntity<?> idDupCheck(@RequestBody String userId){
-		return ResponseEntity.ok().body(userService.idDupCheck(userId));
+	public ResponseEntity<?> idDupCheck(@RequestBody UserRequest dto){
+		return ResponseEntity.ok().body(userService.idDupCheck(dto.getUserId()));
 	}
 	
 	@PostMapping("/sign-up")
 	public ResponseEntity<?> signUp(@RequestBody UserRequest dto){
 		return ResponseEntity.ok().body(userService.signUp(dto));
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody UserRequest dto){
+		return ResponseEntity.ok().body(userService.login(dto));
 	}
 
 }

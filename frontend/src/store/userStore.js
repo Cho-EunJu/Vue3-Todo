@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 export const useUserStore = defineStore('user', {
     state: () => ({
@@ -17,23 +17,22 @@ export const useUserStore = defineStore('user', {
             this.token = null;
             this.userName = null;
             localStorage.removeItem("token");
-            localStorage.removeItem("token");
+            localStorage.removeItem("userName");
         },
         checkTokenExpiry(){
             if(!this.token) return false;
 
             try {
-                const decodedToken = jwt_decode(this.token);
+                const decodedToken = jwtDecode(this.token);
                 const currentTime = Date.now() / 1000;
     
                 if(decodedToken.exp < currentTime){
-                    console.log("checkTokenExpiry()");   
                     this.clearUser();
                     return false;
                 }
                 return true;
             } catch (error) {
-                console.log(error);
+                console.log("checkTokenExpiry(): ", error);
                 return false;
             } 
         },

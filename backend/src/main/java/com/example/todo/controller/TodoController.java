@@ -1,6 +1,8 @@
 package com.example.todo.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,12 @@ public class TodoController {
 	@PostMapping("/write")
 	public ResponseEntity<?> write(@RequestBody TodoRequest dto){
 		return ResponseEntity.ok().body(todoService.write(dto));
+	}
+	
+	@GetMapping("/list")
+	public ResponseEntity<?> todoList(Authentication auth){
+		String userId = auth.getName();
+		return ResponseEntity.ok().body(todoService.getList(userId));
 	}
 	
 

@@ -1,5 +1,7 @@
 package com.example.todo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.todo.domain.TodoEntity;
@@ -23,6 +25,10 @@ public class TodoService {
 		todoRepository.save(newTodo);
 		
 		return "SUCCESS";
+	}
+
+	public List<TodoEntity> getList(String userId) {
+		return todoRepository.findAllByUserIdOrderByIdDesc(userId);
 	}
 
 }

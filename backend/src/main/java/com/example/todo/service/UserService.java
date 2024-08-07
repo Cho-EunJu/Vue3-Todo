@@ -7,8 +7,13 @@ import com.example.todo.domain.UserRequest;
 import com.example.todo.exception.CustomException;
 import com.example.todo.exception.ErrorCode;
 import com.example.todo.repository.UserRepository;
+import com.example.todo.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
@@ -38,6 +43,27 @@ public class UserService {
 		
 		userRepository.save(user);
 		return true;
+	}
+
+	public Map<String, String> login(UserRequest dto) {
+		
+		Map<String, String> result = new HashMap<String, String>();
+		
+		
+		UserEntity user =  userRepository.findByUserId(dto.getUserId())
+							.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND, "잘못된 ID또는 PW 입니다."));
+		
+		if(!encoder.matches(dto.getPassword(), user.getPassword())) {
+			throw new CustomException(ErrorCode.USER_NOT_FOUND, "잘못된 ID또는 PW 입니다.");
+		}
+		
+		
+		String token = JwtUtil.generateToken(user.getUserId());
+		
+		result.put("token", token);
+		result.put("userName", user.getUserName());
+		
+		return result;
 	}
 	
 

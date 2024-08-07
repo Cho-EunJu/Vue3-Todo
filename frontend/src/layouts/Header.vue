@@ -22,7 +22,11 @@
           <li><a href="#" class="nav-link px-2 text-white">About</a></li> -->
         </ul>
 
-        <div class="text-end">
+        <div class="text-end" v-if="isAuthenticated">
+          <RouterLink to="/mypage" class="my-name">{{ userStore.userName }} 님</RouterLink>
+          <button class="btn btn-secondary" type="button" @click="logout">Logout</button>
+        </div>
+        <div class="text-end" v-else>
           <RouterLink to="/login" class="btn btn-outline-light me-2">Login</RouterLink>
           <RouterLink to="/sign-up" class="btn btn-warning">Sign-up</RouterLink>
         </div>
@@ -32,9 +36,20 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRouter, useRoute, RouterLink } from 'vue-router';
+import { useUserStore } from '@/store/userStore';
+import { computed } from 'vue';
 
+const userStore = useUserStore();
+const isAuthenticated = computed(() => userStore.isAuthenticated); // 상태에 접근 반응형
+const router = useRouter();
 const route = useRoute();
+
+
+const logout = () => {
+  userStore.clearUser();
+  router.push("/");
+}
 
 </script>
 
@@ -44,5 +59,11 @@ const route = useRoute();
   }
   .bi{
     vertical-align: -.125em;
+  }
+
+  .my-name{
+    padding-right: 10px;
+    text-decoration: none;
+    color: aliceblue;
   }
 </style>

@@ -10,7 +10,13 @@ public class ExceptionManager {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<?> appExceptionHandler(CustomException e){
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-				.body(e.getErrorCode().name() + " : " +e.getMessage());
+				.body(e.getErrorCode().getHttpStatus() + " : " +e.getMessage());
 	}
+	
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<?> runtimeExceptionHandler(RuntimeException e){
+		return ResponseEntity.status(ErrorCode.RUNTIME.getHttpStatus())
+				.body(e.getMessage());
+	}	
 	
 }
