@@ -51,10 +51,10 @@ public class UserService {
 		
 		
 		UserEntity user =  userRepository.findByUserId(dto.getUserId())
-							.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND, "잘못된 ID또는 PW 입니다."));
+							.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND, "잘못된 ID또는 PW 입니다."));
 		
 		if(!encoder.matches(dto.getPassword(), user.getPassword())) {
-			throw new CustomException(ErrorCode.USER_NOT_FOUND, "잘못된 ID또는 PW 입니다.");
+			throw new CustomException(ErrorCode.NOT_FOUND, "잘못된 ID또는 PW 입니다.");
 		}
 		
 		

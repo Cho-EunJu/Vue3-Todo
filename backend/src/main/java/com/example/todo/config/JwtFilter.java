@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +50,9 @@ public class JwtFilter extends OncePerRequestFilter{
 		//2) header에 token 없을 경우 Block --> Exception 발생 안함
 		if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			log.error("authorizationHeader 잘못보냈습니다.");
-			throw new CustomException(ErrorCode.JWT_EXCEPTION, "형식이 유효하지 않습니다. 재로그인 해주세요.");
+			setErrorResponse(ErrorCode.JWT_EXCEPTION.getHttpStatus(), response, "형식이 유효하지 않습니다. 재로그인 해주세요.");
+			return;
+			//throw new CustomException(ErrorCode.JWT_EXCEPTION, "형식이 유효하지 않습니다. 재로그인 해주세요.");
 		}
 		
 		//3) token 꺼내기
@@ -59,10 +62,14 @@ public class JwtFilter extends OncePerRequestFilter{
 		try {
 			if(JwtUtil.isExpired(token)) {
 				log.error("토큰 만료");
-				throw new CustomException(ErrorCode.JWT_EXCEPTION, "세션이 만료되었습니다. 재로그인 해주세요.");		
+				setErrorResponse(ErrorCode.JWT_EXCEPTION.getHttpStatus(), response, "세션이 만료되었습니다. 재로그인 해주세요.");
+				return;
+				//throw new CustomException(ErrorCode.JWT_EXCEPTION, "세션이 만료되었습니다. 재로그인 해주세요.");		
 			}
 		} catch (ExpiredJwtException e) {
-			throw new CustomException(ErrorCode.JWT_EXCEPTION, "세션이 만료되었습니다. 재로그인 해주세요.");
+			setErrorResponse(ErrorCode.JWT_EXCEPTION.getHttpStatus(), response, "세션이 만료되었습니다. 재로그인 해주세요.");
+			return;
+			//throw new CustomException(ErrorCode.JWT_EXCEPTION, "세션이 만료되었습니다. 재로그인 해주세요.");
 		} 
 		
 		//5) userId 꺼내기
@@ -76,4 +83,12 @@ public class JwtFilter extends OncePerRequestFilter{
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 		filterChain.doFilter(request, response);		
 	}
+	
+
+    private void setErrorResponse(HttpStatus status, HttpServletResponse response, String message) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"error\": \"" + message + "\"}");
+    }
 }

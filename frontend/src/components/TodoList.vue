@@ -18,11 +18,13 @@
     <hr>
 
     <div class="item-container" v-if="!errorMsg.value">
-      <div class="input-group mb-3" v-for="item in todos" :key="item.id">
+      <div class="input-group mb-3" v-for="(item, index) in todos" :key="item.id">
         <div class="input-group-text">
-          <input class="form-check-input mt-0" 
-                  type="checkbox" aria-label="Checkbox for following text input" 
-                  @click="checkTodo(item.id)"  :checked="item.completed === 'Y'">
+          <input class="form-check-input mt-0 item" 
+                  type="checkbox" 
+                  aria-label="Checkbox for following text input" 
+                  @click="checkTodo(item.id, $event, index)"  
+                  :checked="item.completed === 'Y'">
         </div>
         <p class="form-control mb-0" :class="['form-control mb-0', item.completed === 'Y' ? 'todo-completed' : '']">{{ item.subject }}</p>
       </div>
@@ -38,8 +40,10 @@
   import { $axios } from '@/api/index';
   import { ref, onMounted } from 'vue';
   import { useUserStore } from '@/store/userStore';
+  import { useRouter } from 'vue-router';
 
   const api = $axios();
+  const router = useRouter();
   const todos = ref([]);
 
   const userStore = useUserStore();
@@ -57,9 +61,43 @@
       todos.value = response.data;
 
     } catch (error) {
-      console.log(errMsg + "\n" + error);
       const errMsg =  error.response?.data?.message || 'Failed to fetch todos';
+      console.log(errMsg + "\n" + error);
       errorMsg.value = errMsg;
+
+      if(error.response.status === 401){
+        alert(error.response.data.error);
+        userStore.clearUser();
+        router.push("/login");
+      }
+    }
+  }
+
+  const checkTodo = async (changeId, event, index) => {
+    const changeCompleted = event.target.checked ? "Y" : "N";
+
+    try {
+      const response2 = await api.put("/todos/todo", {
+        'changeId' : changeId,
+        'changeCompleted' : changeCompleted
+        },
+        { headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+     if(response2.data === true){
+      todos.value[index].completed = changeCompleted;
+     }
+        
+
+    } catch (error) {
+      console.log(error);
+      if(error.response.status === 401){
+        alert(error.response.data.error);
+        userStore.clearUser();
+        router.push("/login");
+      }
     }
   }
 
@@ -75,5 +113,9 @@
 
   .todo-completed{
     text-decoration: line-through;
+  }
+
+  .item-container .item:hover{
+    cursor: pointer;
   }
 </style>

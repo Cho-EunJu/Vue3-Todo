@@ -10,7 +10,7 @@ public class ExceptionManager {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<?> appExceptionHandler(CustomException e){
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-				.body(e.getErrorCode().getHttpStatus() + " : " +e.getMessage());
+				.body(e.getErrorCode().getHttpStatus().name() + " : " +e.getMessage());
 	}
 	
 	@ExceptionHandler(RuntimeException.class)

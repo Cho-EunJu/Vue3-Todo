@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 	USER_DUPILCATED(HttpStatus.CONFLICT, ""),
-	USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, ""),
+	NOT_FOUND(HttpStatus.NOT_FOUND, ""),
 	RUNTIME(HttpStatus.SEE_OTHER, ""),
 	JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "");
 	

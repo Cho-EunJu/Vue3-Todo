@@ -63,7 +63,7 @@ const createTodo = () => {
   if(!window.confirm("저장하시겠습니까?")) return;
 
   api
-    .post('/todos/write', {subject: subject.value, body: todoBody.value, userId: 1})
+    .post('/todos/todo', {subject: subject.value, body: todoBody.value, userId: 1})
     .then(() => {
       window.alert("저장 완료했습니다.");
       goBack();

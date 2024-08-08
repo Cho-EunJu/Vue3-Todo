@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TodoRequest {
 	
+	private Long changeId;
+	private String changeCompleted;
+	
 	private String subject;
 	private String body;
 	
