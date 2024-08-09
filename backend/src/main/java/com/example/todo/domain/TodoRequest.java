@@ -1,9 +1,15 @@
 package com.example.todo.domain;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class TodoRequest {
 	
@@ -14,5 +20,7 @@ public class TodoRequest {
 	private String body;
 	
 	private String userId;
+	
+	private List<MultipartFile> files;
 
 }

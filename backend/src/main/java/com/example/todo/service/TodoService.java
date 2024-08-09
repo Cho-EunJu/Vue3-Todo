@@ -2,6 +2,7 @@ package com.example.todo.service;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.todo.domain.TodoEntity;
@@ -20,13 +21,23 @@ public class TodoService {
 	private final TodoRepository todoRepository;
 
 	public String write(TodoRequest dto) {
+		String userId = SecurityContextHolder.getContext()
+							.getAuthentication().getName();
+		
+		System.out.println("subject:: "+dto.getSubject());
+		System.out.println("body:: "+dto.getBody());
+		System.out.println("userId:: "+userId);
+		for (int i = 0; i < dto.getFiles().size(); i++) {
+			System.out.println("fileName:: "+dto.getFiles().get(i).getOriginalFilename());
+		}
+		
 		TodoEntity newTodo = TodoEntity.builder()
 								.subject(dto.getSubject())
 								.body(dto.getBody())
-								.userId(dto.getUserId())
+								.userId(userId)
 								.build();
-		todoRepository.save(newTodo);
 		
+	//	todoRepository.save(newTodo);
 		return "SUCCESS";
 	}
 
